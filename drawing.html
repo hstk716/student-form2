@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Drawing Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* Global */
+* { box-sizing: border-box; margin:0; padding:0; }
+html, body { height: 100%; font-family: 'Inter', sans-serif; }
+
+/* Futuristic black-and-white background */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+/* Sparse white dots with subtle glitch animation */
+body::before {
+  content: '';
+  position: absolute;
+  top:0; left:0; right:0; bottom:0;
+  background-image: radial-gradient(circle, #fff 2px, transparent 2px);
+  background-size: 100px 100px;
+  z-index: 0;
+  animation: glitchDots 6s infinite alternate ease-in-out;
+  opacity: 0.15;
+}
+
+@keyframes glitchDots {
+  0%   { transform: translate(0px, 0px); }
+  25%  { transform: translate(1px, -1px); }
+  50%  { transform: translate(-1px, 2px); }
+  75%  { transform: translate(1px, 1px); }
+  100% { transform: translate(0px, -1px); }
+}
+
+/* Container */
+.container {
+  position: relative;
+  z-index: 1;
+  background: #111;
+  padding: 25px 30px;
+  max-width: 450px;
+  width: 90%;
+  border-radius: 16px;
+  border: 1px solid #fff;
+  box-shadow: 0 0 40px rgba(255,255,255,0.05);
+}
+
+/* Headings */
+h2 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+/* Drawing canvas */
+canvas {
+  display: block;
+  background: #000;
+  border: 1px solid #fff;
+  width: 100%;
+  height: 300px;
+  cursor: crosshair;
+  margin-top: 15px;
+}
+
+/* Button */
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: #000;
+  color: #fff;
+  border: 1px solid #fff;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h2>Draw your design</h2>
+  <canvas id="drawingCanvas"></canvas>
+  <button id="saveBtn">Save & Submit</button>
+</div>
+
+<script>
+const canvas = document.getElementById('drawingCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = canvas.offsetWidth;
+canvas.height = 300;
+
+let drawing = false;
+
+canvas.addEventListener('mousedown', () => drawing = true);
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseout', () => drawing = false);
+
+canvas.addEventListener('mousemove', draw);
+
+function draw(e) {
+  if(!drawing) return;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#fff';
+  const rect = canvas.getBoundingClientRect();
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+// Save button
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const dataUrl = canvas.toDataURL('image/png');
+  window.open(dataUrl, "_blank");
+});
+</script>
+</body>
+</html>
+
+
